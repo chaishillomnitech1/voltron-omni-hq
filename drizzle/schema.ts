@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -25,4 +25,53 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Chat Messages Table
+ * Stores all messages sent through the real-time chat system
+ */
+export const chatMessages = mysqlTable("chat_messages", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  userId: int("user_id").notNull(),
+  author: varchar("author", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  type: mysqlEnum("type", ["user", "bot", "system"]).default("user"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type ChatMessage = typeof chatMessages.$inferSelect;
+export type InsertChatMessage = typeof chatMessages.$inferInsert;
+
+/**
+ * Notifications Table
+ * Stores all notifications for users (chat, GitHub, system events)
+ */
+export const notifications = mysqlTable("notifications", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  userId: int("user_id"),
+  type: mysqlEnum("type", ["chat", "github", "system", "success", "error"]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+  read: boolean("read").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;
+
+/**
+ * GitHub Events Table
+ * Stores GitHub repository events (commits, PRs, issues)
+ */
+export const githubEvents = mysqlTable("github_events", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  repository: varchar("repository", { length: 255 }).notNull(),
+  eventType: mysqlEnum("event_type", ["push", "pull_request", "issue", "release"]).notNull(),
+  author: varchar("author", { length: 255 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  url: varchar("url", { length: 500 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type GitHubEvent = typeof githubEvents.$inferSelect;
+export type InsertGitHubEvent = typeof githubEvents.$inferInsert;

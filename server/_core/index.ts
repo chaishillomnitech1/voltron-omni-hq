@@ -7,6 +7,8 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { initEmailService } from "./email";
+import { startGitHubWatcher } from "../jobs/github-watcher";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -60,6 +62,14 @@ async function startServer() {
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });
+
+  // Initialize email service
+  const emailReady = await initEmailService();
+  if (emailReady) {
+    console.log('[Server] Email service ready');
+    // Start GitHub watcher if email is configured
+    startGitHubWatcher();
+  }
 }
 
 startServer().catch(console.error);

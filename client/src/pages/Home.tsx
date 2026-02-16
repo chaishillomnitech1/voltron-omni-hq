@@ -5,6 +5,9 @@ import { OpenSeaIntegration } from '@/components/OpenSeaIntegration';
 import { RealtimeChat } from '@/components/RealtimeChat';
 import { GitHubFeed } from '@/components/GitHubFeed';
 import { ThemeCustomizer } from '@/components/ThemeCustomizer';
+import { NotificationCenter } from '@/components/NotificationCenter';
+import { AdminDashboard } from '@/components/AdminDashboard';
+import { useAuth } from "@/_core/hooks/useAuth";
 
 /**
  * VOLTRON OMNI-DIMENSIONAL HEADQUARTERS
@@ -16,6 +19,8 @@ import { ThemeCustomizer } from '@/components/ThemeCustomizer';
  */
 
 export default function Home() {
+  const { user, loading, error, isAuthenticated, logout } = useAuth();
+
   const [revenue, setRevenue] = useState(2270000.00);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioProgress, setAudioProgress] = useState(0);
@@ -38,9 +43,9 @@ export default function Home() {
   // Check for existing wallet connection
   useEffect(() => {
     const checkWalletConnection = async () => {
-      if (typeof window !== 'undefined' && window.ethereum) {
+      if (typeof window !== 'undefined' && (window as any).ethereum) {
         try {
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          const accounts = await (window as any).ethereum.request({ method: 'eth_accounts' });
           if (accounts.length > 0) {
             setAccount(accounts[0]);
           }
@@ -73,14 +78,14 @@ export default function Home() {
 
   // Web3 Wallet Connection
   const connectWallet = async () => {
-    if (!window.ethereum) {
+    if (!(window as any).ethereum) {
       alert('Please install MetaMask or another Web3 wallet');
       return;
     }
 
     try {
       setIsConnecting(true);
-      const accounts = await window.ethereum.request({
+      const accounts = await (window as any).ethereum.request({
         method: 'eth_requestAccounts',
       });
 
@@ -147,10 +152,12 @@ export default function Home() {
           <button onClick={() => setActiveTab('lullaby')} className={`hover:text-[#d4af37] transition ${activeTab === 'lullaby' ? 'text-[#d4af37]' : ''}`}>Lullaby</button>
           <button onClick={() => setActiveTab('community')} className={`hover:text-[#d4af37] transition ${activeTab === 'community' ? 'text-[#d4af37]' : ''}`}>Community</button>
           <button onClick={() => setActiveTab('github')} className={`hover:text-[#d4af37] transition ${activeTab === 'github' ? 'text-[#d4af37]' : ''}`}>GitHub</button>
+          <button onClick={() => setActiveTab('admin')} className={`hover:text-[#d4af37] transition ${activeTab === 'admin' ? 'text-[#d4af37]' : ''}`}>Admin</button>
         </div>
         
         {/* Quick Actions */}
         <div className="hidden md:flex gap-3">
+          <NotificationCenter />
           <button
             onClick={() => setShowThemeCustomizer(!showThemeCustomizer)}
             className="p-2 hover:bg-[#1a1a1a] rounded transition text-gray-400 hover:text-[#d4af37]"
@@ -197,6 +204,7 @@ export default function Home() {
             <button onClick={() => { setActiveTab('lullaby'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'lullaby' ? 'text-[#d4af37]' : 'text-gray-400'}`}>Lullaby</button>
             <button onClick={() => { setActiveTab('community'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'community' ? 'text-[#d4af37]' : 'text-gray-400'}`}>Community</button>
             <button onClick={() => { setActiveTab('github'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'github' ? 'text-[#d4af37]' : 'text-gray-400'}`}>GitHub</button>
+            <button onClick={() => { setActiveTab('admin'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'admin' ? 'text-[#d4af37]' : 'text-gray-400'}`}>Admin</button>
           </div>
         </div>
       )}
@@ -247,6 +255,7 @@ export default function Home() {
               <div className="flex flex-col md:flex-row items-center justify-center gap-8">
                 <img 
                   src="https://private-us-east-1.manuscdn.com/sessionFile/WhmXNn3FM8SlnVQyrnjuAG/sandbox/n9ztDUMuI2triLD6gruluT-img-4_1771252548000_na1fn_dm9sdHJvbi1mcmVxdWVuY3ktdmlzdWFs.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvV2htWE5uM0ZNOFNsblZReXJuanVBRy9zYW5kYm94L241enREVU11STJ0cmlMRDZncnVsdVQtaW1nLTRfMTc3MTI1MjU0ODAwMF9uYTFmbl9kbTlzZEhKdmJpMW1jbVZ4ZFdWdVkza3RkbWx6ZFdGcy5wbmc~eC1vc3MtcHJvY2Vzcz1pbWFnZS9yZXNpemUsd18xOTIwLGhfMTkyMC9mb3JtYXQsd2VicC9xdWFsaXR5LHFfODAiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=cIfEJcjOPx~JVYSDt0flXUWYfYH81obSWFGNqezrKZignxzsbX3YE9hGoGBajsJoutP9ev~YL7PGMu~hjHc-cTt6hA3De0wVBqsIK3MmhUxd7JYER8qmEtQW8gYPIVN-zAC~Nl0~KSAIDMkoE0urCzKwEeSnR-HFXl1Jpvm9wXDIpqHe2cxzWW5GR1wxnsOl3nidXa9aA301Zsm~1mHqT2PLW-7qpR0MXMI0RFSnZAdLB~Qt5k8w3IVqEcAJN6NXIb3nUo4UVCrQ2fMl2up7WwFFn2AuMLqJO1XtqSQecW3BNYIcjN2wXjTMCnbLZE8tvfcsz9T9RvASaE4uqPz-vg__"
+
                   alt="Sacred Frequencies Visualization"
                   className="w-full md:w-64 h-64 object-contain"
                 />
@@ -282,6 +291,7 @@ export default function Home() {
               <div className="rounded-lg border border-[#2a2a2a] bg-gradient-to-br from-[#0f0f0f] to-[#050505] overflow-hidden">
                 <img 
                   src="https://private-us-east-1.manuscdn.com/sessionFile/WhmXNn3FM8SlnVQyrnjuAG/sandbox/n9ztDUMuI2triLD6gruluT-img-2_1771252554000_na1fn_dm9sdHJvbi1uZnQtc2hvd2Nhc2U.png?x-oss-process=image/resize,w_1920,h_1920/format,webp/quality,q_80&Expires=1798761600&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvV2htWE5uM0ZNOFNsblZReXJuanVBRy9zYW5kYm94L241enREVU11STJ0cmlMRDZncnVsdVQtaW1nLTJfMTc3MTI1MjU1NDAwMF9uYTFmbl9kbTlzZEhKdmJpMXVablF0YzJodmQyTmhjMlUucG5nP3gtb3NzLXByb2Nlc3M9aW1hZ2UvcmVzaXplLHdfMTkyMCxoXzE5MjAvZm9ybWF0LHdlYnAvcXVhbGl0eSxxXzgwIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=I8exvVIaq5j9FQocgBQgqKrlu798qvVcitlas3a-F36zgtfQB6bNfU0zTNMwS6E8jTLtNMaWHjEkxNH9wlyBYR1Olh7cgWyJ-liVUOXW4eQqtrAZYg7j7DwB2l~mFb6YBPDQztgMav9GW2vjAOmQLl0iKP6puce06weNY6RYog2hsxqwy7TsqmYyvVo0lO~gIxDd47QvqQsl9iX~LoLwKoA4cPiEnHK5UrObAx9NsIb2tdreaHHj505okvDs~t-XTFm-8oAtWu0RGBFMB1h-vevwf~SNdIeNycpzYh0kYkvYtBGrXLpR3xR1HcZ-Vwfe7gxHVqtysZasGE8YpwP84Q__"
+
                   alt="ScrollSoul Sovereignty NFT"
                   className="w-full aspect-square object-cover"
                 />
@@ -444,6 +454,11 @@ export default function Home() {
             </div>
             <GitHubFeed username="chaishillomnitech1" />
           </div>
+        )}
+
+        {/* Admin Dashboard Tab */}
+        {activeTab === 'admin' && (
+          <AdminDashboard />
         )}
       </main>
 

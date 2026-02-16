@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, Shield, Zap, Heart, TrendingUp, Globe, Lock, Crown, Info, ChevronRight, Menu, X } from 'lucide-react';
+import { CommunitySection } from '@/components/CommunitySection';
+import { OpenSeaIntegration } from '@/components/OpenSeaIntegration';
 
 /**
  * VOLTRON OMNI-DIMENSIONAL HEADQUARTERS
@@ -16,6 +18,8 @@ export default function Home() {
   const [audioProgress, setAudioProgress] = useState(0);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [account, setAccount] = useState<string | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Live Revenue Logic - Tesla 3-6-9 Scaling Simulation
@@ -24,6 +28,23 @@ export default function Home() {
       setRevenue(prev => prev + (Math.random() * 0.144));
     }, 100);
     return () => clearInterval(interval);
+  }, []);
+
+  // Check for existing wallet connection
+  useEffect(() => {
+    const checkWalletConnection = async () => {
+      if (typeof window !== 'undefined' && window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts.length > 0) {
+            setAccount(accounts[0]);
+          }
+        } catch (error) {
+          console.error('Error checking wallet:', error);
+        }
+      }
+    };
+    checkWalletConnection();
   }, []);
 
   // Audio Logic for Londyn's Lullaby
@@ -42,6 +63,29 @@ export default function Home() {
     if (audioRef.current) {
       const progress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
       setAudioProgress(progress);
+    }
+  };
+
+  // Web3 Wallet Connection
+  const connectWallet = async () => {
+    if (!window.ethereum) {
+      alert('Please install MetaMask or another Web3 wallet');
+      return;
+    }
+
+    try {
+      setIsConnecting(true);
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts',
+      });
+
+      if (accounts.length > 0) {
+        setAccount(accounts[0]);
+      }
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+    } finally {
+      setIsConnecting(false);
     }
   };
 
@@ -96,6 +140,7 @@ export default function Home() {
           <button onClick={() => setActiveTab('vault')} className={`hover:text-[#d4af37] transition ${activeTab === 'vault' ? 'text-[#d4af37]' : ''}`}>Sacred Vault</button>
           <button onClick={() => setActiveTab('nft')} className={`hover:text-[#d4af37] transition ${activeTab === 'nft' ? 'text-[#d4af37]' : ''}`}>NFT Genesis</button>
           <button onClick={() => setActiveTab('lullaby')} className={`hover:text-[#d4af37] transition ${activeTab === 'lullaby' ? 'text-[#d4af37]' : ''}`}>Lullaby</button>
+          <button onClick={() => setActiveTab('community')} className={`hover:text-[#d4af37] transition ${activeTab === 'community' ? 'text-[#d4af37]' : ''}`}>Community</button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -112,6 +157,7 @@ export default function Home() {
             <button onClick={() => { setActiveTab('vault'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'vault' ? 'text-[#d4af37]' : 'text-gray-400'}`}>Sacred Vault</button>
             <button onClick={() => { setActiveTab('nft'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'nft' ? 'text-[#d4af37]' : 'text-gray-400'}`}>NFT Genesis</button>
             <button onClick={() => { setActiveTab('lullaby'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'lullaby' ? 'text-[#d4af37]' : 'text-gray-400'}`}>Lullaby</button>
+            <button onClick={() => { setActiveTab('community'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'community' ? 'text-[#d4af37]' : 'text-gray-400'}`}>Community</button>
           </div>
         </div>
       )}
@@ -234,9 +280,13 @@ export default function Home() {
                   </div>
                 </div>
 
-                <button className="w-full bg-gradient-to-r from-[#d4af37] to-[#ff6b9d] text-black font-bold py-3 rounded-lg hover:shadow-lg hover:shadow-[#d4af37]/50 transition-all duration-300">
-                  View on OpenSea <ChevronRight className="inline ml-2" size={18} />
-                </button>
+                <div className="border-t border-[#2a2a2a] pt-6">
+                  <OpenSeaIntegration 
+                    onConnectWallet={connectWallet}
+                    isConnecting={isConnecting}
+                    account={account}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -337,6 +387,11 @@ export default function Home() {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Community Tab */}
+        {activeTab === 'community' && (
+          <CommunitySection />
         )}
       </main>
 

@@ -75,3 +75,56 @@ export const githubEvents = mysqlTable("github_events", {
 
 export type GitHubEvent = typeof githubEvents.$inferSelect;
 export type InsertGitHubEvent = typeof githubEvents.$inferInsert;
+
+/**
+ * User Profiles Table
+ * Stores user customization and preferences
+ */
+export const userProfiles = mysqlTable("user_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().unique(),
+  displayName: varchar("display_name", { length: 255 }),
+  bio: text("bio"),
+  avatarUrl: varchar("avatar_url", { length: 500 }),
+  notificationEmailEnabled: boolean("notification_email_enabled").default(true),
+  notificationChatEnabled: boolean("notification_chat_enabled").default(true),
+  notificationGithubEnabled: boolean("notification_github_enabled").default(true),
+  themePreference: varchar("theme_preference", { length: 50 }).default("rose-gold"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type InsertUserProfile = typeof userProfiles.$inferInsert;
+
+/**
+ * Flagged Messages Table
+ * Stores messages flagged for moderation review
+ */
+export const flaggedMessages = mysqlTable("flagged_messages", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  messageId: varchar("message_id", { length: 64 }).notNull(),
+  flaggedBy: int("flagged_by").notNull(),
+  reason: varchar("reason", { length: 255 }).notNull(),
+  status: mysqlEnum("status", ["pending", "reviewed", "resolved"]).default("pending"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type FlaggedMessage = typeof flaggedMessages.$inferSelect;
+export type InsertFlaggedMessage = typeof flaggedMessages.$inferInsert;
+
+/**
+ * Admin Logs Table
+ * Stores all admin actions for audit trail
+ */
+export const adminLogs = mysqlTable("admin_logs", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  adminId: int("admin_id").notNull(),
+  action: varchar("action", { length: 100 }).notNull(),
+  targetId: varchar("target_id", { length: 64 }),
+  details: text("details"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type AdminLog = typeof adminLogs.$inferSelect;
+export type InsertAdminLog = typeof adminLogs.$inferInsert;

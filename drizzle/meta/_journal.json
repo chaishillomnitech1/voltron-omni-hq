@@ -15,6 +15,13 @@
       "when": 1771262193888,
       "tag": "0001_productive_wind_dancer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1771263342521,
+      "tag": "0002_shallow_plazm",
+      "breakpoints": true
     }
   ]
 }

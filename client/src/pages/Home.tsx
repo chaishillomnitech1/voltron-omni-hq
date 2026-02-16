@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Shield, Zap, Heart, TrendingUp, Globe, Lock, Crown, Info, ChevronRight, Menu, X } from 'lucide-react';
+import { Play, Pause, Shield, Zap, Heart, TrendingUp, Globe, Lock, Crown, Info, ChevronRight, Menu, X, MessageCircle, Github, Settings } from 'lucide-react';
 import { CommunitySection } from '@/components/CommunitySection';
 import { OpenSeaIntegration } from '@/components/OpenSeaIntegration';
+import { RealtimeChat } from '@/components/RealtimeChat';
+import { GitHubFeed } from '@/components/GitHubFeed';
+import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 
 /**
  * VOLTRON OMNI-DIMENSIONAL HEADQUARTERS
@@ -17,6 +20,8 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioProgress, setAudioProgress] = useState(0);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [showChat, setShowChat] = useState(false);
+  const [showThemeCustomizer, setShowThemeCustomizer] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [account, setAccount] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -141,12 +146,45 @@ export default function Home() {
           <button onClick={() => setActiveTab('nft')} className={`hover:text-[#d4af37] transition ${activeTab === 'nft' ? 'text-[#d4af37]' : ''}`}>NFT Genesis</button>
           <button onClick={() => setActiveTab('lullaby')} className={`hover:text-[#d4af37] transition ${activeTab === 'lullaby' ? 'text-[#d4af37]' : ''}`}>Lullaby</button>
           <button onClick={() => setActiveTab('community')} className={`hover:text-[#d4af37] transition ${activeTab === 'community' ? 'text-[#d4af37]' : ''}`}>Community</button>
+          <button onClick={() => setActiveTab('github')} className={`hover:text-[#d4af37] transition ${activeTab === 'github' ? 'text-[#d4af37]' : ''}`}>GitHub</button>
+        </div>
+        
+        {/* Quick Actions */}
+        <div className="hidden md:flex gap-3">
+          <button
+            onClick={() => setShowThemeCustomizer(!showThemeCustomizer)}
+            className="p-2 hover:bg-[#1a1a1a] rounded transition text-gray-400 hover:text-[#d4af37]"
+            title="Customize Theme"
+          >
+            <Settings size={20} />
+          </button>
+          <button
+            onClick={() => setShowChat(!showChat)}
+            className="p-2 hover:bg-[#1a1a1a] rounded transition text-gray-400 hover:text-[#d4af37]"
+            title="Open Chat"
+          >
+            <MessageCircle size={20} />
+          </button>
         </div>
 
-        {/* Mobile Menu Button */}
-        <button className="md:hidden text-[#d4af37]" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile Quick Actions */}
+        <div className="md:hidden flex gap-2">
+          <button
+            onClick={() => setShowThemeCustomizer(!showThemeCustomizer)}
+            className="p-2 hover:bg-[#1a1a1a] rounded transition text-gray-400 hover:text-[#d4af37]"
+          >
+            <Settings size={20} />
+          </button>
+          <button
+            onClick={() => setShowChat(!showChat)}
+            className="p-2 hover:bg-[#1a1a1a] rounded transition text-gray-400 hover:text-[#d4af37]"
+          >
+            <MessageCircle size={20} />
+          </button>
+          <button className="text-[#d4af37]" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </nav>
 
       {/* Mobile Navigation */}
@@ -158,6 +196,7 @@ export default function Home() {
             <button onClick={() => { setActiveTab('nft'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'nft' ? 'text-[#d4af37]' : 'text-gray-400'}`}>NFT Genesis</button>
             <button onClick={() => { setActiveTab('lullaby'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'lullaby' ? 'text-[#d4af37]' : 'text-gray-400'}`}>Lullaby</button>
             <button onClick={() => { setActiveTab('community'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'community' ? 'text-[#d4af37]' : 'text-gray-400'}`}>Community</button>
+            <button onClick={() => { setActiveTab('github'); setMobileMenuOpen(false); }} className={`text-left text-sm font-bold uppercase tracking-widest hover:text-[#d4af37] transition ${activeTab === 'github' ? 'text-[#d4af37]' : 'text-gray-400'}`}>GitHub</button>
           </div>
         </div>
       )}
@@ -393,7 +432,45 @@ export default function Home() {
         {activeTab === 'community' && (
           <CommunitySection />
         )}
+
+        {/* GitHub Tab */}
+        {activeTab === 'github' && (
+          <div className="space-y-8 px-6 md:px-8 pb-16">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold font-serif text-[#d4af37] mb-4">Project Updates</h2>
+              <p className="text-gray-400 max-w-2xl">
+                Live feed from the ScrollSoul Nexus repositories. Track development, contributions, and the evolution of the empire's digital infrastructure.
+              </p>
+            </div>
+            <GitHubFeed username="chaishillomnitech1" />
+          </div>
+        )}
       </main>
+
+      {/* Chat Sidebar */}
+      {showChat && (
+        <div className="fixed bottom-6 right-6 w-96 max-h-96 z-50 shadow-2xl rounded-lg overflow-hidden">
+          <RealtimeChat />
+        </div>
+      )}
+
+      {/* Theme Customizer Modal */}
+      {showThemeCustomizer && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex items-center justify-center p-4">
+          <div className="w-full max-w-md max-h-96 overflow-y-auto">
+            <div className="flex items-center justify-between mb-4 sticky top-0 bg-[#050505] pb-4">
+              <h3 className="text-lg font-bold text-white">Portal Customization</h3>
+              <button
+                onClick={() => setShowThemeCustomizer(false)}
+                className="text-gray-400 hover:text-[#d4af37] transition"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <ThemeCustomizer />
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-[#2a2a2a] bg-[#050505]/80 backdrop-blur-xl mt-16">

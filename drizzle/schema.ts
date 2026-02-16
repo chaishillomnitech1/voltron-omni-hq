@@ -128,3 +128,165 @@ export const adminLogs = mysqlTable("admin_logs", {
 
 export type AdminLog = typeof adminLogs.$inferSelect;
 export type InsertAdminLog = typeof adminLogs.$inferInsert;
+
+
+// ============================================
+// VOLTRON WEALTH NEXUS SCHEMA
+// ============================================
+
+/**
+ * User Vaults - Personal asset registry
+ */
+export const userVaults = mysqlTable("user_vaults", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").notNull().references(() => users.id),
+  vaultName: varchar("vault_name", { length: 255 }).notNull(),
+  bio: text("bio"),
+  totalAssetsCount: int("total_assets_count").default(0),
+  estimatedAnnualValue: int("estimated_annual_value").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserVault = typeof userVaults.$inferSelect;
+export type InsertUserVault = typeof userVaults.$inferInsert;
+
+/**
+ * Vault Assets - Individual assets within a vault
+ */
+export const vaultAssets = mysqlTable("vault_assets", {
+  id: int("id").autoincrement().primaryKey(),
+  vaultId: int("vault_id").notNull().references(() => userVaults.id),
+  assetType: mysqlEnum("asset_type", ["skill", "content", "ip", "network", "data"]).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: varchar("category", { length: 100 }),
+  monetizationPotential: mysqlEnum("monetization_potential", ["high", "medium", "low"]).default("medium"),
+  marketDemandScore: int("market_demand_score").default(0),
+  competitiveAdvantage: int("competitive_advantage").default(0),
+  baseValue: int("base_value").default(0),
+  uniqueMultiplier: varchar("unique_multiplier", { length: 10 }).default("1.0"),
+  estimatedAnnualRevenue: int("estimated_annual_revenue").default(0),
+  revenueHistory: text("revenue_history"),
+  status: mysqlEnum("status", ["active", "inactive", "pending_monetization"]).default("active"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VaultAsset = typeof vaultAssets.$inferSelect;
+export type InsertVaultAsset = typeof vaultAssets.$inferInsert;
+
+/**
+ * Marketplace Opportunities
+ */
+export const marketplaceOpportunities = mysqlTable("marketplace_opportunities", {
+  id: int("id").autoincrement().primaryKey(),
+  creatorId: int("creator_id").notNull().references(() => users.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  assetTypesNeeded: text("asset_types_needed"),
+  budgetMin: int("budget_min").default(0),
+  budgetMax: int("budget_max").default(0),
+  timeline: varchar("timeline", { length: 100 }),
+  status: mysqlEnum("status", ["open", "matched", "in_progress", "completed"]).default("open"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  deadline: timestamp("deadline"),
+});
+
+export type MarketplaceOpportunity = typeof marketplaceOpportunities.$inferSelect;
+export type InsertMarketplaceOpportunity = typeof marketplaceOpportunities.$inferInsert;
+
+/**
+ * Asset-Opportunity Matches
+ */
+export const assetOpportunityMatches = mysqlTable("asset_opportunity_matches", {
+  id: int("id").autoincrement().primaryKey(),
+  assetId: int("asset_id").notNull(),
+  opportunityId: int("opportunity_id").notNull(),
+  matchScore: int("match_score").default(0),
+  synergyNotes: text("synergy_notes"),
+  estimatedRevenue: int("estimated_revenue").default(0),
+  status: mysqlEnum("status", ["suggested", "accepted", "rejected", "completed"]).default("suggested"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+});
+
+export type AssetOpportunityMatch = typeof assetOpportunityMatches.$inferSelect;
+export type InsertAssetOpportunityMatch = typeof assetOpportunityMatches.$inferInsert;
+
+/**
+ * Sovereign Circles - Group wealth creation
+ */
+export const sovereignCircles = mysqlTable("sovereign_circles", {
+  id: int("id").autoincrement().primaryKey(),
+  founderId: int("founder_id").notNull().references(() => users.id),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  memberCount: int("member_count").default(1),
+  totalCombinedValue: int("total_combined_value").default(0),
+  governanceType: mysqlEnum("governance_type", ["democratic", "founder_led", "consensus"]).default("founder_led"),
+  status: mysqlEnum("status", ["active", "inactive"]).default("active"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SovereignCircle = typeof sovereignCircles.$inferSelect;
+export type InsertSovereignCircle = typeof sovereignCircles.$inferInsert;
+
+/**
+ * Circle Members
+ */
+export const circleMembers = mysqlTable("circle_members", {
+  id: int("id").autoincrement().primaryKey(),
+  circleId: int("circle_id").notNull().references(() => sovereignCircles.id),
+  userId: int("user_id").notNull().references(() => users.id),
+  role: mysqlEnum("role", ["founder", "member", "advisor"]).default("member"),
+  contributionPercentage: int("contribution_percentage").default(0),
+  joinedAt: timestamp("joined_at").defaultNow().notNull(),
+  status: mysqlEnum("status", ["active", "inactive"]).default("active"),
+});
+
+export type CircleMember = typeof circleMembers.$inferSelect;
+export type InsertCircleMember = typeof circleMembers.$inferInsert;
+
+/**
+ * Wealth Agreements - Smart contracts & deals
+ */
+export const wealthAgreements = mysqlTable("wealth_agreements", {
+  id: int("id").autoincrement().primaryKey(),
+  type: mysqlEnum("type", ["asset_sale", "revenue_share", "partnership", "licensing"]).notNull(),
+  partyAId: int("party_a_id").notNull(),
+  partyBId: int("party_b_id").notNull(),
+  assetId: int("asset_id"),
+  opportunityId: int("opportunity_id"),
+  terms: text("terms"),
+  revenueSplit: text("revenue_split"),
+  contractHash: varchar("contract_hash", { length: 255 }),
+  status: mysqlEnum("status", ["draft", "signed", "active", "completed", "disputed"]).default("draft"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  signedAt: timestamp("signed_at"),
+  expiresAt: timestamp("expires_at"),
+});
+
+export type WealthAgreement = typeof wealthAgreements.$inferSelect;
+export type InsertWealthAgreement = typeof wealthAgreements.$inferInsert;
+
+/**
+ * Wealth Transactions - Revenue tracking
+ */
+export const wealthTransactions = mysqlTable("wealth_transactions", {
+  id: int("id").autoincrement().primaryKey(),
+  agreementId: int("agreement_id"),
+  fromUserId: int("from_user_id").notNull(),
+  toUserId: int("to_user_id").notNull(),
+  amount: int("amount").notNull(),
+  assetId: int("asset_id"),
+  transactionType: mysqlEnum("transaction_type", ["payment", "royalty", "revenue_share"]).notNull(),
+  status: mysqlEnum("status", ["pending", "completed", "failed"]).default("pending"),
+  blockchainHash: varchar("blockchain_hash", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+});
+
+export type WealthTransaction = typeof wealthTransactions.$inferSelect;
+export type InsertWealthTransaction = typeof wealthTransactions.$inferInsert;

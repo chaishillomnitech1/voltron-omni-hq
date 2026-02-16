@@ -22,6 +22,20 @@
       "when": 1771263342521,
       "tag": "0002_shallow_plazm",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1771266379076,
+      "tag": "0003_red_doctor_strange",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1771266411421,
+      "tag": "0004_chilly_betty_ross",
+      "breakpoints": true
     }
   ]
 }

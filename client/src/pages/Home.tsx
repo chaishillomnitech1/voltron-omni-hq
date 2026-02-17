@@ -8,6 +8,7 @@ import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 import { NotificationCenter } from '@/components/NotificationCenter';
 import { AdminDashboard } from '@/components/AdminDashboard';
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useLocation } from 'wouter';
 
 /**
  * VOLTRON OMNI-DIMENSIONAL HEADQUARTERS
@@ -19,6 +20,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
  */
 
 export default function Home() {
+  const [, navigate] = useLocation();
   const { user, loading, error, isAuthenticated, logout } = useAuth();
 
   const [revenue, setRevenue] = useState(2270000.00);
@@ -153,6 +155,9 @@ export default function Home() {
           <button onClick={() => setActiveTab('community')} className={`hover:text-[#d4af37] transition ${activeTab === 'community' ? 'text-[#d4af37]' : ''}`}>Community</button>
           <button onClick={() => setActiveTab('github')} className={`hover:text-[#d4af37] transition ${activeTab === 'github' ? 'text-[#d4af37]' : ''}`}>GitHub</button>
           <button onClick={() => setActiveTab('admin')} className={`hover:text-[#d4af37] transition ${activeTab === 'admin' ? 'text-[#d4af37]' : ''}`}>Admin</button>
+          <button onClick={() => navigate('/nft-minting')} className="hover:text-[#d4af37] transition">NFT Minting</button>
+          <button onClick={() => navigate('/dao-governance')} className="hover:text-[#d4af37] transition">DAO</button>
+          <button onClick={() => navigate('/vibe-engine')} className="hover:text-[#d4af37] transition">VibeEngine</button>
         </div>
         
         {/* Quick Actions */}

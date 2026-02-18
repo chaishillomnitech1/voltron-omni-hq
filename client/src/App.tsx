@@ -13,7 +13,7 @@ function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/ "} component={Home} />
+      <Route path={"/"} component={Home} />
       <Route path={"/nft-minting"} component={NFTMinting} />
       <Route path={"/dao-governance"} component={DAOGovernance} />
       <Route path={"/vibe-engine"} component={VibeEngine} />

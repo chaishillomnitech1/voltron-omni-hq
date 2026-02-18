@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Music, Send, BarChart3, Link2, Zap, Globe } from 'lucide-react';
+import { Music, Send, BarChart3, Link2, Zap, Globe, Plus, Trash2, TrendingUp } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
 
 export default function VibeEngine() {
@@ -14,6 +14,23 @@ export default function VibeEngine() {
   const [contentUrl, setContentUrl] = useState('');
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['youtube', 'spotify']);
   const [scheduleTime, setScheduleTime] = useState('');
+  
+  // A/B Testing state
+  const [abTestTitle, setAbTestTitle] = useState('');
+  const [variants, setVariants] = useState<Array<{
+    id: string;
+    title: string;
+    description: string;
+    imageUrl: string;
+    engagementRate?: number;
+    impressions?: number;
+    clicks?: number;
+  }>>([
+    { id: 'var-1', title: 'Variant A', description: '', imageUrl: '' },
+    { id: 'var-2', title: 'Variant B', description: '', imageUrl: '' },
+  ]);
+  const [selectedVariantId, setSelectedVariantId] = useState('var-1');
+  const [showABResults, setShowABResults] = useState(false);
 
   const createCampaignMutation = trpc.distribution.createCampaign.useMutation();
   const uploadContentMutation = trpc.distribution.uploadContent.useMutation();
@@ -65,6 +82,46 @@ export default function VibeEngine() {
     }
   };
 
+  const updateVariant = (id: string, field: string, value: string) => {
+    setVariants(prev => prev.map(v => v.id === id ? { ...v, [field]: value } : v));
+  };
+
+  const addVariant = () => {
+    const newId = `var-${Date.now()}`;
+    setVariants(prev => [...prev, { id: newId, title: `Variant ${String.fromCharCode(65 + prev.length)}`, description: '', imageUrl: '' }]);
+  };
+
+  const removeVariant = (id: string) => {
+    if (variants.length > 2) {
+      setVariants(prev => prev.filter(v => v.id !== id));
+    }
+  };
+
+  const launchABTest = async () => {
+    if (!abTestTitle || variants.some(v => !v.title || !v.description)) {
+      alert('Please fill in all variant details');
+      return;
+    }
+
+    // Simulate A/B test launch with random engagement metrics
+    const updatedVariants = variants.map(v => ({
+      ...v,
+      engagementRate: Math.random() * 15,
+      impressions: Math.floor(Math.random() * 10000) + 1000,
+      clicks: Math.floor(Math.random() * 500) + 50,
+    }));
+
+    setVariants(updatedVariants);
+    setShowABResults(true);
+    alert(`A/B Test "${abTestTitle}" launched across ${selectedPlatforms.length} platforms!`);
+  };
+
+  const getWinnerVariant = () => {
+    return variants.reduce((prev, current) => 
+      (current.engagementRate || 0) > (prev.engagementRate || 0) ? current : prev
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8">
       <div className="max-w-7xl mx-auto">
@@ -74,7 +131,7 @@ export default function VibeEngine() {
             <Music className="w-8 h-8 text-rose-400" />
             <h1 className="text-4xl font-bold text-rose-400">VibeEngine</h1>
           </div>
-          <p className="text-slate-300 text-lg">Automated multi-platform content distribution for the ScrollSoul Nexus</p>
+          <p className="text-slate-300 text-lg">Automated multi-platform content distribution with A/B testing</p>
         </div>
 
         {/* Platform Connections */}
@@ -111,91 +168,86 @@ export default function VibeEngine() {
             <TabsTrigger value="schedule" className="data-[state=active]:bg-rose-400/10 data-[state=active]:text-rose-400">
               Schedule
             </TabsTrigger>
+            <TabsTrigger value="ab-testing" className="data-[state=active]:bg-rose-400/10 data-[state=active]:text-rose-400">
+              A/B Testing
+            </TabsTrigger>
             <TabsTrigger value="analytics" className="data-[state=active]:bg-rose-400/10 data-[state=active]:text-rose-400">
               Analytics
-            </TabsTrigger>
-            <TabsTrigger value="history" className="data-[state=active]:bg-rose-400/10 data-[state=active]:text-rose-400">
-              History
             </TabsTrigger>
           </TabsList>
 
           {/* Campaigns Tab */}
-          <TabsContent value="campaigns" className="space-y-6">
+          <TabsContent value="campaigns" className="space-y-6 mt-6">
             <Card className="bg-slate-800 border-rose-400/20">
               <CardHeader>
                 <CardTitle className="text-rose-400">Create Campaign</CardTitle>
-                <CardDescription>Launch a new multi-platform distribution campaign</CardDescription>
+                <CardDescription>Launch a new content distribution campaign</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Campaign Title</label>
+                  <label className="text-sm text-slate-300 mb-2 block">Campaign Title</label>
                   <Input
-                    placeholder="e.g., Prophecy Fulfilled - Global Release"
+                    placeholder="e.g., Londyn's Lullaby - Global Release"
                     value={campaignTitle}
                     onChange={(e) => setCampaignTitle(e.target.value)}
-                    className="bg-slate-700 border-slate-600 text-white"
+                    className="bg-slate-900 border-rose-400/20 text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-3">Target Platforms</label>
-                  <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
-                    {platforms.map((platform) => (
-                      <button
-                        key={platform.id}
-                        onClick={() => togglePlatform(platform.id)}
-                        className={`p-3 rounded text-xs font-medium transition ${
-                          selectedPlatforms.includes(platform.id)
-                            ? 'bg-rose-400 text-slate-900'
-                            : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                        }`}
-                      >
-                        {platform.name}
-                      </button>
-                    ))}
-                  </div>
+                  <label className="text-sm text-slate-300 mb-2 block">Content Title</label>
+                  <Input
+                    placeholder="e.g., Londyn's Lullaby"
+                    value={contentTitle}
+                    onChange={(e) => setContentTitle(e.target.value)}
+                    className="bg-slate-900 border-rose-400/20 text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm text-slate-300 mb-2 block">Content URL</label>
+                  <Input
+                    placeholder="https://..."
+                    value={contentUrl}
+                    onChange={(e) => setContentUrl(e.target.value)}
+                    className="bg-slate-900 border-rose-400/20 text-white"
+                  />
                 </div>
 
                 <Button
                   onClick={handleCreateCampaign}
-                  disabled={createCampaignMutation.isPending}
-                  className="w-full bg-rose-400 hover:bg-rose-500 text-slate-900 font-bold"
+                  className="w-full bg-rose-400 hover:bg-rose-500 text-slate-900 font-semibold"
                 >
-                  {createCampaignMutation.isPending ? 'Creating...' : 'Create Campaign'}
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Campaign
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Active Campaigns */}
+            {/* Recent Campaigns */}
             <div className="space-y-3">
-              <h3 className="text-lg font-bold text-white">Active Campaigns</h3>
+              <h3 className="text-rose-400 font-semibold">Recent Campaigns</h3>
               {[
-                {
-                  id: 'camp-001',
-                  title: 'Prophecy Fulfilled - Launch',
-                  platforms: 3,
-                  reaches: 45230,
-                  engagements: 6234,
-                },
-                {
-                  id: 'camp-002',
-                  title: 'Sacred Frequencies Release',
-                  platforms: 2,
-                  reaches: 12500,
-                  engagements: 1823,
-                },
-              ].map((campaign) => (
-                <Card key={campaign.id} className="bg-slate-800 border-slate-600">
-                  <CardContent className="pt-6">
+                { id: 'camp-001', title: 'Londyn\'s Lullaby Release', platforms: 6, status: 'Active', reach: '125K' },
+                { id: 'camp-002', title: 'Q1 Content Series', platforms: 4, status: 'Scheduled', reach: '89K' },
+                { id: 'camp-003', title: 'Community Showcase', platforms: 3, status: 'Completed', reach: '234K' },
+              ].map(campaign => (
+                <Card key={campaign.id} className="bg-slate-800 border-rose-400/10">
+                  <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="font-bold text-white">{campaign.title}</h4>
-                        <p className="text-sm text-slate-400">{campaign.platforms} platforms • {campaign.reaches.toLocaleString()} reaches</p>
+                        <p className="font-semibold text-white">{campaign.title}</p>
+                        <p className="text-xs text-slate-400 mt-1">{campaign.platforms} platforms • {campaign.reach} reach</p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-rose-400">{campaign.engagements.toLocaleString()}</p>
-                        <p className="text-xs text-slate-400">engagements</p>
-                      </div>
+                      <span className={`text-xs font-semibold px-3 py-1 rounded ${
+                        campaign.status === 'Active'
+                          ? 'bg-green-400/20 text-green-400'
+                          : campaign.status === 'Scheduled'
+                          ? 'bg-amber-400/20 text-amber-400'
+                          : 'bg-slate-700 text-slate-300'
+                      }`}>
+                        {campaign.status}
+                      </span>
                     </div>
                   </CardContent>
                 </Card>
@@ -204,165 +256,215 @@ export default function VibeEngine() {
           </TabsContent>
 
           {/* Schedule Tab */}
-          <TabsContent value="schedule" className="space-y-6">
+          <TabsContent value="schedule" className="space-y-6 mt-6">
             <Card className="bg-slate-800 border-rose-400/20">
               <CardHeader>
                 <CardTitle className="text-rose-400">Schedule Distribution</CardTitle>
-                <CardDescription>Plan your content release across platforms</CardDescription>
+                <CardDescription>Set when your content goes live across platforms</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Content Title</label>
-                  <Input
-                    placeholder="e.g., Lyric Plaque: Prophecy Fulfilled"
-                    value={contentTitle}
-                    onChange={(e) => setContentTitle(e.target.value)}
-                    className="bg-slate-700 border-slate-600 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Content URL</label>
-                  <Input
-                    placeholder="https://..."
-                    value={contentUrl}
-                    onChange={(e) => setContentUrl(e.target.value)}
-                    className="bg-slate-700 border-slate-600 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Schedule Time</label>
+                  <label className="text-sm text-slate-300 mb-2 block">Schedule Time</label>
                   <Input
                     type="datetime-local"
                     value={scheduleTime}
                     onChange={(e) => setScheduleTime(e.target.value)}
-                    className="bg-slate-700 border-slate-600 text-white"
+                    className="bg-slate-900 border-rose-400/20 text-white"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-3">Platforms</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {platforms.map((platform) => (
-                      <button
-                        key={platform.id}
-                        onClick={() => togglePlatform(platform.id)}
-                        className={`p-3 rounded text-sm font-medium transition ${
-                          selectedPlatforms.includes(platform.id)
-                            ? 'bg-rose-400 text-slate-900'
-                            : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                        }`}
-                      >
-                        {platform.name}
-                      </button>
-                    ))}
-                  </div>
                 </div>
 
                 <Button
                   onClick={handleScheduleDistribution}
-                  disabled={scheduleDistributionMutation.isPending}
-                  className="w-full bg-rose-400 hover:bg-rose-500 text-slate-900 font-bold"
+                  className="w-full bg-rose-400 hover:bg-rose-500 text-slate-900 font-semibold"
                 >
-                  {scheduleDistributionMutation.isPending ? 'Scheduling...' : 'Schedule Distribution'}
+                  <Send className="w-4 h-4 mr-2" />
+                  Schedule Distribution
                 </Button>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="bg-slate-800 border-rose-400/20">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-slate-400 text-sm">Total Reaches</p>
-                      <p className="text-2xl font-bold text-rose-400">57,730</p>
-                    </div>
-                    <Globe className="w-8 h-8 text-rose-400" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-slate-800 border-amber-400/20">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-slate-400 text-sm">Engagements</p>
-                      <p className="text-2xl font-bold text-amber-400">8,057</p>
-                    </div>
-                    <Zap className="w-8 h-8 text-amber-400" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="bg-slate-800 border-green-400/20">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-slate-400 text-sm">Engagement Rate</p>
-                      <p className="text-2xl font-bold text-green-400">14%</p>
-                    </div>
-                    <BarChart3 className="w-8 h-8 text-green-400" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card className="bg-slate-800 border-slate-600">
+          {/* A/B Testing Tab */}
+          <TabsContent value="ab-testing" className="space-y-6 mt-6">
+            <Card className="bg-slate-800 border-rose-400/20">
               <CardHeader>
-                <CardTitle className="text-white">Platform Performance</CardTitle>
+                <CardTitle className="text-rose-400">A/B Testing</CardTitle>
+                <CardDescription>Test different content titles and images to optimize engagement</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-6">
+                <div>
+                  <label className="text-sm text-slate-300 mb-2 block">Test Name</label>
+                  <Input
+                    placeholder="e.g., Title Variation Test"
+                    value={abTestTitle}
+                    onChange={(e) => setAbTestTitle(e.target.value)}
+                    className="bg-slate-900 border-rose-400/20 text-white"
+                  />
+                </div>
+
                 <div className="space-y-4">
-                  {[
-                    { platform: 'YouTube', reaches: 15000, engagements: 2100, rate: 14 },
-                    { platform: 'Spotify', reaches: 18000, engagements: 2500, rate: 13.9 },
-                    { platform: 'Twitter', reaches: 12230, engagements: 1650, rate: 13.5 },
-                    { platform: 'TikTok', reaches: 12500, engagements: 1807, rate: 14.5 },
-                  ].map((stat) => (
-                    <div key={stat.platform} className="bg-slate-700 p-4 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-white">{stat.platform}</span>
-                        <span className="text-sm text-slate-400">{stat.engagements} engagements</span>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-rose-400 font-semibold">Variants</h3>
+                    <Button
+                      onClick={addVariant}
+                      size="sm"
+                      className="bg-rose-400/20 hover:bg-rose-400/30 text-rose-400 border border-rose-400/30"
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Variant
+                    </Button>
+                  </div>
+
+                  {variants.map((variant, idx) => (
+                    <div key={variant.id} className="p-4 bg-slate-900 rounded border border-rose-400/10 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold text-white">Variant {String.fromCharCode(65 + idx)}</h4>
+                        {variants.length > 2 && (
+                          <button
+                            onClick={() => removeVariant(variant.id)}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
-                      <div className="w-full bg-slate-600 rounded-full h-2">
-                        <div
-                          className="bg-gradient-to-r from-rose-400 to-rose-500 h-2 rounded-full"
-                          style={{ width: `${stat.rate * 7}%` }}
+
+                      <div>
+                        <label className="text-xs text-slate-400 mb-1 block">Title</label>
+                        <Input
+                          placeholder="Content title for this variant"
+                          value={variant.title}
+                          onChange={(e) => updateVariant(variant.id, 'title', e.target.value)}
+                          className="bg-slate-800 border-rose-400/20 text-white text-sm"
                         />
                       </div>
+
+                      <div>
+                        <label className="text-xs text-slate-400 mb-1 block">Description</label>
+                        <Textarea
+                          placeholder="Variant description..."
+                          value={variant.description}
+                          onChange={(e) => updateVariant(variant.id, 'description', e.target.value)}
+                          className="bg-slate-800 border-rose-400/20 text-white text-sm"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-slate-400 mb-1 block">Image URL</label>
+                        <Input
+                          placeholder="https://..."
+                          value={variant.imageUrl}
+                          onChange={(e) => updateVariant(variant.id, 'imageUrl', e.target.value)}
+                          className="bg-slate-800 border-rose-400/20 text-white text-sm"
+                        />
+                      </div>
+
+                      {showABResults && variant.engagementRate !== undefined && (
+                        <div className="p-3 bg-slate-800 rounded border border-rose-400/20 space-y-2">
+                          <p className="text-xs text-slate-400">Performance Metrics</p>
+                          <div className="grid grid-cols-3 gap-2 text-center">
+                            <div>
+                              <p className="text-xs text-slate-400">Engagement</p>
+                              <p className="text-sm font-semibold text-rose-400">{variant.engagementRate?.toFixed(1)}%</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-slate-400">Impressions</p>
+                              <p className="text-sm font-semibold text-rose-400">{variant.impressions?.toLocaleString()}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs text-slate-400">Clicks</p>
+                              <p className="text-sm font-semibold text-rose-400">{variant.clicks?.toLocaleString()}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
+
+                <Button
+                  onClick={launchABTest}
+                  disabled={!abTestTitle || variants.some(v => !v.title || !v.description)}
+                  className="w-full bg-rose-400 hover:bg-rose-500 text-slate-900 font-semibold"
+                >
+                  <TrendingUp className="w-4 h-4 mr-2" />
+                  Launch A/B Test
+                </Button>
+
+                {showABResults && (
+                  <div className="p-4 bg-green-400/10 border border-green-400/30 rounded">
+                    <p className="text-sm text-green-400 font-semibold mb-2">🏆 Winner Detected</p>
+                    <p className="text-sm text-slate-300">
+                      <strong>{getWinnerVariant().title}</strong> is performing best with {getWinnerVariant().engagementRate?.toFixed(1)}% engagement rate
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* History Tab */}
-          <TabsContent value="history" className="space-y-6">
-            <Card className="bg-slate-800 border-slate-600">
+          {/* Analytics Tab */}
+          <TabsContent value="analytics" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="bg-slate-800 border-rose-400/20">
+                <CardContent className="pt-6">
+                  <p className="text-slate-400 text-sm mb-2">Total Reach</p>
+                  <p className="text-3xl font-bold text-rose-400">2.4M</p>
+                  <p className="text-xs text-slate-400 mt-2">+12% this month</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-slate-800 border-rose-400/20">
+                <CardContent className="pt-6">
+                  <p className="text-slate-400 text-sm mb-2">Engagement Rate</p>
+                  <p className="text-3xl font-bold text-rose-400">8.3%</p>
+                  <p className="text-xs text-slate-400 mt-2">Industry avg: 5.2%</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-slate-800 border-rose-400/20">
+                <CardContent className="pt-6">
+                  <p className="text-slate-400 text-sm mb-2">Active Campaigns</p>
+                  <p className="text-3xl font-bold text-rose-400">12</p>
+                  <p className="text-xs text-slate-400 mt-2">Across 6 platforms</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-slate-800 border-rose-400/20">
+                <CardContent className="pt-6">
+                  <p className="text-slate-400 text-sm mb-2">A/B Tests Running</p>
+                  <p className="text-3xl font-bold text-rose-400">3</p>
+                  <p className="text-xs text-slate-400 mt-2">2 with winners</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="bg-slate-800 border-rose-400/20">
               <CardHeader>
-                <CardTitle className="text-white">Distribution History</CardTitle>
+                <CardTitle className="text-rose-400">Platform Performance</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {[
-                    { title: 'Prophecy Fulfilled', date: '2 days ago', platforms: 3, status: 'completed' },
-                    { title: 'Sacred Frequencies', date: '5 days ago', platforms: 2, status: 'completed' },
-                    { title: 'Genesis Release', date: '1 week ago', platforms: 6, status: 'completed' },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-slate-700 rounded-lg">
-                      <div>
-                        <p className="font-medium text-white">{item.title}</p>
-                        <p className="text-xs text-slate-400">{item.date} • {item.platforms} platforms</p>
-                      </div>
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-400/20 text-green-400">
-                        {item.status}
-                      </span>
+              <CardContent className="space-y-3">
+                {[
+                  { platform: 'YouTube', reach: '850K', engagement: '9.2%', trend: '+15%' },
+                  { platform: 'TikTok', reach: '620K', engagement: '12.1%', trend: '+28%' },
+                  { platform: 'Instagram', reach: '480K', engagement: '7.8%', trend: '+8%' },
+                  { platform: 'Twitter', reach: '320K', engagement: '6.5%', trend: '+5%' },
+                  { platform: 'Spotify', reach: '95K', engagement: '4.2%', trend: '-2%' },
+                  { platform: 'SoundCloud', reach: '35K', engagement: '3.1%', trend: '+12%' },
+                ].map(stat => (
+                  <div key={stat.platform} className="flex items-center justify-between p-3 bg-slate-900 rounded border border-rose-400/10">
+                    <div>
+                      <p className="font-semibold text-white">{stat.platform}</p>
+                      <p className="text-xs text-slate-400">{stat.reach} reach</p>
                     </div>
-                  ))}
-                </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-rose-400">{stat.engagement}</p>
+                      <p className={`text-xs ${stat.trend.startsWith('+') ? 'text-green-400' : 'text-red-400'}`}>
+                        {stat.trend}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           </TabsContent>

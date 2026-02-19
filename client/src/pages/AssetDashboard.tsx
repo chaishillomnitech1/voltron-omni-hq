@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TrendingUp, Wallet, Bitcoin, Zap, DollarSign } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { Web3WalletButton } from '@/components/Web3WalletButton';
 
 interface WalletBalance {
   address: string;
@@ -112,11 +113,14 @@ export default function AssetDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-cyan-400 mb-2">
-            Multi-Chain Asset Dashboard
-          </h1>
-          <p className="text-slate-400">Track your assets across Ethereum, Solana, and Bitcoin</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-cyan-400 mb-2">
+              Multi-Chain Asset Dashboard
+            </h1>
+            <p className="text-slate-400">Track your assets across Ethereum, Solana, and Bitcoin</p>
+          </div>
+          <Web3WalletButton />
         </div>
 
         {/* Wallet Input Section */}

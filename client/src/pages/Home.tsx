@@ -7,6 +7,8 @@ import { GitHubFeed } from '@/components/GitHubFeed';
 import { ThemeCustomizer } from '@/components/ThemeCustomizer';
 import { NotificationCenter } from '@/components/NotificationCenter';
 import { AdminDashboard } from '@/components/AdminDashboard';
+import { ContractDeployment } from '@/components/ContractDeployment';
+import { EmailNotificationService } from '@/components/EmailNotificationService';
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from 'wouter';
 
@@ -158,6 +160,8 @@ export default function Home() {
           <button onClick={() => navigate('/nft-minting')} className="hover:text-[#d4af37] transition">NFT Minting</button>
           <button onClick={() => navigate('/dao-governance')} className="hover:text-[#d4af37] transition">DAO</button>
           <button onClick={() => navigate('/vibe-engine')} className="hover:text-[#d4af37] transition">VibeEngine</button>
+          <button onClick={() => setActiveTab('contracts')} className={`hover:text-[#d4af37] transition ${activeTab === 'contracts' ? 'text-[#d4af37]' : ''}`}>Contracts</button>
+          <button onClick={() => setActiveTab('email')} className={`hover:text-[#d4af37] transition ${activeTab === 'email' ? 'text-[#d4af37]' : ''}`}>Email</button>
         </div>
         
         {/* Quick Actions */}
@@ -464,6 +468,16 @@ export default function Home() {
         {/* Admin Dashboard Tab */}
         {activeTab === 'admin' && (
           <AdminDashboard />
+        )}
+
+        {/* Contract Deployment Tab */}
+        {activeTab === 'contracts' && (
+          <ContractDeployment />
+        )}
+
+        {/* Email Notification Tab */}
+        {activeTab === 'email' && (
+          <EmailNotificationService />
         )}
       </main>
 

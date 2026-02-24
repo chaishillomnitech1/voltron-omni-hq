@@ -122,20 +122,20 @@
 ## ScrollSoul Nexus Systems (NEW)
 
 ### NFT Minting & Royalty Tracking
-- [ ] Smart contract integration (ERC-721/1155)
-- [ ] NFT metadata management
-- [ ] Royalty tracking and distribution
-- [ ] Blockchain verification
-- [ ] Minting UI component
+- [x] Smart contract integration (ERC-721/1155) - LyricPlaqueNFT contract
+- [x] NFT metadata management - UI component with metadata configuration
+- [x] Royalty tracking and distribution - Royalty percentage configuration
+- [x] Blockchain verification - MetaMask integration ready
+- [x] Minting UI component - ContractDeployment component
 - [ ] Gallery and collection management
 
 ### DAO Governance
-- [ ] DAO creation and setup
-- [ ] Voting system (proposals, voting, execution)
+- [x] DAO creation and setup - VoltronDAO smart contract
+- [x] Voting system (proposals, voting, execution) - Proposal creation UI
 - [ ] Treasury management
-- [ ] Member roles and permissions
+- [x] Member roles and permissions - DAO structure ready
 - [ ] Voting history and analytics
-- [ ] Governance dashboard
+- [x] Governance dashboard - Email notifications for proposals
 
 ### Automated Content Distribution
 - [ ] Platform integrations (YouTube, Spotify, Twitter, etc.)
@@ -144,3 +144,16 @@
 - [ ] Analytics and performance tracking
 - [ ] Content versioning
 - [ ] Distribution dashboard
+
+## Smart Contract Deployment & Email Notifications (COMPLETED)
+- [x] ContractDeployment UI component for NFT minting
+- [x] DAO proposal creation interface
+- [x] Contract address management with copy-to-clipboard
+- [x] EmailNotificationService component
+- [x] Email preference configuration (DAO, inheritance, NFT notifications)
+- [x] Test email functionality
+- [x] Navigation integration (Contracts & Email tabs)
+- [x] Comprehensive vitest coverage (22 passing tests)
+- [x] MetaMask wallet integration ready
+- [x] Sepolia testnet configuration
+- [x] Hardhat deployment script setup

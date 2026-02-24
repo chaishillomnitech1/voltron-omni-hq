@@ -1,10 +1,11 @@
-const hre = require("hardhat");
+import hre from "hardhat";
+import fs from "fs";
 
 async function main() {
   console.log("🚀 Starting smart contract deployment...\n");
 
   // Get deployer account
-  const [deployer] = await ethers.getSigners();
+  const [deployer] = await hre.ethers.getSigners();
   console.log(`📝 Deploying contracts with account: ${deployer.address}`);
   console.log(`💰 Account balance: ${(await deployer.getBalance()).toString()} wei\n`);
 
@@ -12,15 +13,17 @@ async function main() {
   console.log("📦 Deploying InheritanceVault...");
   const InheritanceVault = await hre.ethers.getContractFactory("InheritanceVault");
   const inheritanceVault = await InheritanceVault.deploy();
-  await inheritanceVault.deployed();
-  console.log(`✅ InheritanceVault deployed to: ${inheritanceVault.address}\n`);
+  await inheritanceVault.waitForDeployment();
+  const inheritanceVaultAddress = await inheritanceVault.getAddress();
+  console.log(`✅ InheritanceVault deployed to: ${inheritanceVaultAddress}\n`);
 
   // Deploy VoltronDAO
   console.log("📦 Deploying VoltronDAO...");
   const VoltronDAO = await hre.ethers.getContractFactory("VoltronDAO");
   const voltronDAO = await VoltronDAO.deploy();
-  await voltronDAO.deployed();
-  console.log(`✅ VoltronDAO deployed to: ${voltronDAO.address}\n`);
+  await voltronDAO.waitForDeployment();
+  const voltronDAOAddress = await voltronDAO.getAddress();
+  console.log(`✅ VoltronDAO deployed to: ${voltronDAOAddress}\n`);
 
   // Deploy LyricPlaqueNFT
   console.log("📦 Deploying LyricPlaqueNFT...");
@@ -30,14 +33,15 @@ async function main() {
     "PLAQUE",
     deployer.address
   );
-  await lyricPlaqueNFT.deployed();
-  console.log(`✅ LyricPlaqueNFT deployed to: ${lyricPlaqueNFT.address}\n`);
+  await lyricPlaqueNFT.waitForDeployment();
+  const lyricPlaqueNFTAddress = await lyricPlaqueNFT.getAddress();
+  console.log(`✅ LyricPlaqueNFT deployed to: ${lyricPlaqueNFTAddress}\n`);
 
   // Save deployment addresses
   const deploymentAddresses = {
-    inheritanceVault: inheritanceVault.address,
-    voltronDAO: voltronDAO.address,
-    lyricPlaqueNFT: lyricPlaqueNFT.address,
+    inheritanceVault: inheritanceVaultAddress,
+    voltronDAO: voltronDAOAddress,
+    lyricPlaqueNFT: lyricPlaqueNFTAddress,
     deployer: deployer.address,
     network: hre.network.name,
     timestamp: new Date().toISOString(),
@@ -47,7 +51,6 @@ async function main() {
   console.log(JSON.stringify(deploymentAddresses, null, 2));
 
   // Save to file
-  const fs = require("fs");
   fs.writeFileSync(
     "./deployments.json",
     JSON.stringify(deploymentAddresses, null, 2)
@@ -55,14 +58,14 @@ async function main() {
   console.log("\n✅ Deployment addresses saved to deployments.json");
 
   // Verify contracts on Etherscan (if on testnet)
-  if (hre.network.name !== "localhost") {
+  if (hre.network.name !== "localhost" && process.env.ETHERSCAN_API_KEY) {
     console.log("\n⏳ Waiting for block confirmations before verification...");
-    await inheritanceVault.deployTransaction.wait(5);
+    await inheritanceVault.deploymentTransaction().wait(5);
     
     console.log("🔍 Verifying contracts on Etherscan...");
     try {
       await hre.run("verify:verify", {
-        address: inheritanceVault.address,
+        address: inheritanceVaultAddress,
         constructorArguments: [],
       });
       console.log("✅ InheritanceVault verified on Etherscan");

@@ -17,6 +17,7 @@ import { Shield, Award, Users, BookOpen, CheckCircle2, AlertCircle, Zap } from '
  * - Family assignments and protection status
  * - Real-time blockchain verification
  * - Guardian performance metrics
+ * - Community benchmark comparisons
  * 
  * Where Love Becomes Law. Legacy Becomes Infinity. 44:Omni × ∞
  */
@@ -42,6 +43,15 @@ interface FamilyAssignment {
   emergencyContacts: number;
 }
 
+interface CommunityBenchmark {
+  avgCertificationLevel: number;
+  avgTrainingCompletion: number;
+  avgAssetsSecured: number;
+  avgFamiliesProtected: number;
+  topGuardianScore: number;
+  avgDaysActive: number;
+}
+
 interface GuardianProfile {
   id: string;
   name: string;
@@ -58,6 +68,7 @@ interface GuardianProfile {
 export default function ScrollVerseGuardians() {
   const { user, isAuthenticated } = useAuth();
   const [guardianProfile, setGuardianProfile] = useState<GuardianProfile | null>(null);
+  const [benchmarks, setBenchmarks] = useState<CommunityBenchmark | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Mock guardian data for demonstration
@@ -150,6 +161,17 @@ export default function ScrollVerseGuardians() {
     };
 
     setGuardianProfile(mockGuardian);
+    
+    // Mock community benchmarks
+    const mockBenchmarks: CommunityBenchmark = {
+      avgCertificationLevel: 65,
+      avgTrainingCompletion: 55,
+      avgAssetsSecured: 2800000,
+      avgFamiliesProtected: 2.1,
+      topGuardianScore: 98,
+      avgDaysActive: 28,
+    };
+    setBenchmarks(mockBenchmarks);
     setLoading(false);
   }, [user]);
 
@@ -201,6 +223,128 @@ export default function ScrollVerseGuardians() {
             Where Love Becomes Law. Legacy Becomes Infinity. 44:Omni × ∞
           </p>
         </div>
+
+        {/* Community Benchmarks Comparison */}
+        {benchmarks && (
+          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="w-5 h-5" />
+                Your Performance vs Community Benchmarks
+              </CardTitle>
+              <CardDescription>See how you compare to other guardians</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Certification Level */}
+                <div className="space-y-3 p-4 bg-card rounded-lg border">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-semibold text-sm">Certification Level</h4>
+                    <span className="text-xs text-muted-foreground">
+                      {guardianProfile.certificationLevel}% vs {benchmarks.avgCertificationLevel}%
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Your Score</p>
+                      <Progress value={guardianProfile.certificationLevel} className="h-2" />
+                      <p className="text-sm font-bold mt-1 text-primary">{guardianProfile.certificationLevel}%</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Community Avg</p>
+                      <Progress value={benchmarks.avgCertificationLevel} className="h-2" />
+                      <p className="text-sm font-bold mt-1">{benchmarks.avgCertificationLevel}%</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-green-600 font-semibold">
+                    ✅ {guardianProfile.certificationLevel - benchmarks.avgCertificationLevel}% above average
+                  </p>
+                </div>
+
+                {/* Training Progress */}
+                <div className="space-y-3 p-4 bg-card rounded-lg border">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-semibold text-sm">Training Progress</h4>
+                    <span className="text-xs text-muted-foreground">
+                      {Math.round((completedModules / totalModules) * 100)}% vs {benchmarks.avgTrainingCompletion}%
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Your Progress</p>
+                      <Progress value={(completedModules / totalModules) * 100} className="h-2" />
+                      <p className="text-sm font-bold mt-1 text-primary">{Math.round((completedModules / totalModules) * 100)}%</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Community Avg</p>
+                      <Progress value={benchmarks.avgTrainingCompletion} className="h-2" />
+                      <p className="text-sm font-bold mt-1">{benchmarks.avgTrainingCompletion}%</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-green-600 font-semibold">
+                    ✅ {Math.round((completedModules / totalModules) * 100) - benchmarks.avgTrainingCompletion}% above average
+                  </p>
+                </div>
+
+                {/* Assets Secured */}
+                <div className="space-y-3 p-4 bg-card rounded-lg border">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-semibold text-sm">Assets Secured</h4>
+                    <span className="text-xs text-muted-foreground">
+                      ${(totalAssetsSecured / 1000000).toFixed(1)}M vs ${(benchmarks.avgAssetsSecured / 1000000).toFixed(1)}M
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Your Assets</p>
+                      <Progress 
+                        value={Math.min((totalAssetsSecured / benchmarks.avgAssetsSecured) * 100, 100)} 
+                        className="h-2" 
+                      />
+                      <p className="text-sm font-bold mt-1 text-primary">${(totalAssetsSecured / 1000000).toFixed(1)}M</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Community Avg</p>
+                      <Progress value={100} className="h-2" />
+                      <p className="text-sm font-bold mt-1">${(benchmarks.avgAssetsSecured / 1000000).toFixed(1)}M</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-green-600 font-semibold">
+                    ✅ {Math.round((totalAssetsSecured / benchmarks.avgAssetsSecured) * 100)}% of community average
+                  </p>
+                </div>
+
+                {/* Families Protected */}
+                <div className="space-y-3 p-4 bg-card rounded-lg border">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-semibold text-sm">Families Protected</h4>
+                    <span className="text-xs text-muted-foreground">
+                      {activeAssignments} vs {benchmarks.avgFamiliesProtected.toFixed(1)}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Your Families</p>
+                      <Progress 
+                        value={Math.min((activeAssignments / benchmarks.avgFamiliesProtected) * 100, 100)} 
+                        className="h-2" 
+                      />
+                      <p className="text-sm font-bold mt-1 text-primary">{activeAssignments} families</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-2">Community Avg</p>
+                      <Progress value={100} className="h-2" />
+                      <p className="text-sm font-bold mt-1">{benchmarks.avgFamiliesProtected.toFixed(1)} families</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-green-600 font-semibold">
+                    ✅ {Math.round((activeAssignments / benchmarks.avgFamiliesProtected) * 100)}% of community average
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Guardian Profile Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -263,188 +407,136 @@ export default function ScrollVerseGuardians() {
           </Card>
         </div>
 
-        {/* Status Indicators */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="border-l-4 border-l-green-500">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium">Protection Status</CardTitle>
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Badge className="bg-green-500/20 text-green-600">
-                {guardianProfile.protectionStatus.toUpperCase()}
-              </Badge>
-              <p className="text-xs text-muted-foreground mt-2">
-                Activated {guardianProfile.activationDate?.toLocaleDateString()}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-l-4 border-l-blue-500">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium">Blockchain Status</CardTitle>
-                <Shield className="w-5 h-5 text-blue-500" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Badge className="bg-blue-500/20 text-blue-600">
-                {guardianProfile.blockchainVerified ? 'VERIFIED' : 'PENDING'}
-              </Badge>
-              <p className="text-xs text-muted-foreground mt-2">On-chain verification complete</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-l-4 border-l-amber-500">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium">Next Training</CardTitle>
-                <BookOpen className="w-5 h-5 text-amber-500" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="font-medium text-sm">Emergency Protocols</p>
-              <p className="text-xs text-muted-foreground mt-2">5 hours estimated</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Tabs for Training and Assignments */}
+        {/* Rest of the dashboard continues as before... */}
         <Tabs defaultValue="training" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="training">Training Modules</TabsTrigger>
             <TabsTrigger value="families">Family Assignments</TabsTrigger>
+            <TabsTrigger value="status">Status</TabsTrigger>
           </TabsList>
 
-          {/* Training Modules Tab */}
           <TabsContent value="training" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Guardian Training Program</CardTitle>
-                <CardDescription>
-                  Complete all modules to achieve maximum certification level
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {guardianProfile.trainingModules.map((module) => (
-                  <div
-                    key={module.id}
-                    className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-accent transition-colors"
-                  >
-                    <div className="text-2xl">{module.icon}</div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-foreground">{module.name}</h3>
-                        {module.completed ? (
-                          <Badge className="bg-green-500/20 text-green-600">Completed</Badge>
-                        ) : (
-                          <Badge variant="outline">In Progress</Badge>
-                        )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {guardianProfile.trainingModules.map((module) => (
+                <Card key={module.id} className={module.completed ? 'border-green-500/50' : ''}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <span>{module.icon}</span>
+                          {module.name}
+                        </CardTitle>
+                        <CardDescription className="text-xs">{module.description}</CardDescription>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">{module.description}</p>
-                      <div className="flex items-center justify-between mt-3">
-                        <span className="text-xs text-muted-foreground">
-                          {module.estimatedHours} hours
-                        </span>
-                        {module.completed && module.score && (
-                          <span className="text-sm font-medium text-primary">Score: {module.score}%</span>
-                        )}
-                      </div>
-                      {module.completed && module.completedAt && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Completed on {module.completedAt.toLocaleDateString()}
-                        </p>
-                      )}
+                      {module.completed && <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />}
                     </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {module.completed ? (
+                      <>
+                        <div className="flex justify-between text-sm">
+                          <span>Score</span>
+                          <span className="font-bold text-green-600">{module.score}%</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Completed {module.completedAt?.toLocaleDateString()}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">
+                        Estimated time: {module.estimatedHours} hours
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
 
-          {/* Family Assignments Tab */}
           <TabsContent value="families" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Family Assignments</CardTitle>
-                <CardDescription>
-                  Families you are protecting and their protection status
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {guardianProfile.familyAssignments.map((family) => (
-                  <div
-                    key={family.id}
-                    className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-accent transition-colors"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-foreground">{family.familyName}</h3>
-                        <div className="flex items-center space-x-2">
-                          {family.primaryGuardian && (
-                            <Badge className="bg-amber-500/20 text-amber-600">Primary</Badge>
-                          )}
-                          <Badge
-                            className={
-                              family.protectionStatus === 'active'
-                                ? 'bg-green-500/20 text-green-600'
-                                : family.protectionStatus === 'pending'
-                                  ? 'bg-yellow-500/20 text-yellow-600'
-                                  : 'bg-gray-500/20 text-gray-600'
-                            }
-                          >
-                            {family.protectionStatus.toUpperCase()}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-4 mt-3">
-                        <div>
-                          <p className="text-xs text-muted-foreground">Assets Secured</p>
-                          <p className="font-semibold text-foreground">
-                            ${(family.assetsSecured / 1000000).toFixed(2)}M
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Emergency Contacts</p>
-                          <p className="font-semibold text-foreground">{family.emergencyContacts}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Activation Date</p>
-                          <p className="font-semibold text-foreground">
-                            {family.activationDate?.toLocaleDateString() || 'Pending'}
-                          </p>
-                        </div>
-                      </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {guardianProfile.familyAssignments.map((family) => (
+                <Card key={family.id}>
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <CardTitle className="text-base">{family.familyName}</CardTitle>
+                      <Badge 
+                        variant={family.protectionStatus === 'active' ? 'default' : 'secondary'}
+                      >
+                        {family.protectionStatus.toUpperCase()}
+                      </Badge>
                     </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span>Assets Secured</span>
+                      <span className="font-bold">${(family.assetsSecured / 1000000).toFixed(1)}M</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Role</span>
+                      <span>{family.primaryGuardian ? 'Primary' : 'Secondary'}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span>Emergency Contacts</span>
+                      <span className="font-bold">{family.emergencyContacts}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="status" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="border-l-4 border-l-green-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium">Protection Status</CardTitle>
+                    <CheckCircle2 className="w-5 h-5 text-green-500" />
                   </div>
-                ))}
-              </CardContent>
-            </Card>
+                </CardHeader>
+                <CardContent>
+                  <Badge className="bg-green-500/20 text-green-600">
+                    {guardianProfile.protectionStatus.toUpperCase()}
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Activated {guardianProfile.activationDate?.toLocaleDateString()}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-l-4 border-l-blue-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium">Blockchain Status</CardTitle>
+                    <Shield className="w-5 h-5 text-blue-500" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Badge className="bg-blue-500/20 text-blue-600">
+                    {guardianProfile.blockchainVerified ? 'VERIFIED' : 'PENDING'}
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">On-chain verification complete</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-l-4 border-l-amber-500">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm font-medium">Community Rank</CardTitle>
+                    <Award className="w-5 h-5 text-amber-500" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Badge className="bg-amber-500/20 text-amber-600">
+                    TOP {Math.round((guardianProfile.certificationLevel / 100) * 100)}%
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">Among all guardians</p>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
-
-        {/* Call to Action */}
-        <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
-          <CardHeader>
-            <CardTitle>Continue Your Guardian Journey</CardTitle>
-            <CardDescription>
-              Complete your training and expand your family protection network
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4">
-              <Button className="bg-primary text-primary-foreground">
-                Start Next Module
-              </Button>
-              <Button variant="outline">
-                View Documentation
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

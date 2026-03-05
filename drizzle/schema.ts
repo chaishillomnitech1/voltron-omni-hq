@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, json } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -26,20 +26,80 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 /**
- * Chat Messages Table
+ * Chat Messages Table - ScrollVerse Real-Time Chat
  * Stores all messages sent through the real-time chat system
+ * Channels: general, guardians, families, training, regional, announcements
  */
 export const chatMessages = mysqlTable("chat_messages", {
   id: varchar("id", { length: 64 }).primaryKey(),
-  userId: int("user_id").notNull(),
-  author: varchar("author", { length: 255 }).notNull(),
-  message: text("message").notNull(),
-  type: mysqlEnum("type", ["user", "bot", "system"]).default("user"),
+  channelId: varchar("channel_id", { length: 64 }).notNull(),
+  userId: varchar("user_id", { length: 64 }).notNull(),
+  userName: varchar("user_name", { length: 255 }).notNull(),
+  userRole: mysqlEnum("user_role", ["guardian", "family", "admin"]).default("family").notNull(),
+  content: text("content").notNull(),
+  likes: int("likes").default(0),
+  reactions: json("reactions").default({}),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });
 
 export type ChatMessage = typeof chatMessages.$inferSelect;
 export type InsertChatMessage = typeof chatMessages.$inferInsert;
+
+/**
+ * Chat Channels Table - ScrollVerse Community Channels
+ */
+export const chatChannels = mysqlTable("chat_channels", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  name: varchar("name", { length: 255 }).notNull().unique(),
+  description: text("description"),
+  type: mysqlEnum("type", ["public", "private", "regional"]).default("public"),
+  memberCount: int("member_count").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type ChatChannel = typeof chatChannels.$inferSelect;
+export type InsertChatChannel = typeof chatChannels.$inferInsert;
+
+/**
+ * Guardian Certification Results Table
+ * Stores quiz completion and certification data
+ */
+export const certificationResults = mysqlTable("certification_results", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  userId: varchar("user_id", { length: 64 }).notNull(),
+  userName: varchar("user_name", { length: 255 }).notNull(),
+  moduleId: varchar("module_id", { length: 64 }).notNull(),
+  moduleName: varchar("module_name", { length: 255 }).notNull(),
+  score: int("score").notNull(),
+  totalQuestions: int("total_questions").notNull(),
+  passed: boolean("passed").notNull(),
+  timeSpent: int("time_spent").notNull(),
+  completedAt: timestamp("completed_at").defaultNow().notNull(),
+});
+
+export type CertificationResult = typeof certificationResults.$inferSelect;
+export type InsertCertificationResult = typeof certificationResults.$inferInsert;
+
+/**
+ * Guardian Milestones Table
+ * Tracks guardian certification milestones and advancement
+ */
+export const guardianMilestones = mysqlTable("guardian_milestones", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  userId: varchar("user_id", { length: 64 }).notNull(),
+  userName: varchar("user_name", { length: 255 }).notNull(),
+  milestoneId: varchar("milestone_id", { length: 64 }).notNull(),
+  milestoneName: varchar("milestone_name", { length: 255 }).notNull(),
+  level: int("level").notNull(),
+  completed: boolean("completed").default(false),
+  completedAt: timestamp("completed_at"),
+  reward: varchar("reward", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type GuardianMilestone = typeof guardianMilestones.$inferSelect;
+export type InsertGuardianMilestone = typeof guardianMilestones.$inferInsert;
 
 /**
  * Notifications Table

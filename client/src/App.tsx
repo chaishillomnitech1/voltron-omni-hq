@@ -9,6 +9,8 @@ import NFTMinting from "./pages/NFTMinting";
 import DAOGovernance from "./pages/DAOGovernance";
 import VibeEngine from "./pages/VibeEngine";
 import AssetDashboard from "./pages/AssetDashboard";
+import ScrollVerse from "./pages/ScrollVerse";
+import ScrollVerseMetrics from "./pages/ScrollVerseMetrics";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -19,6 +21,8 @@ function Router() {
       <Route path={"/dao-governance"} component={DAOGovernance} />
       <Route path={"/vibe-engine"} component={VibeEngine} />
       <Route path={"/assets"} component={AssetDashboard} />
+      <Route path={"/scrollverse"} component={ScrollVerse} />
+      <Route path={"/scrollverse/metrics"} component={ScrollVerseMetrics} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

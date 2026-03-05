@@ -11,6 +11,8 @@ import VibeEngine from "./pages/VibeEngine";
 import AssetDashboard from "./pages/AssetDashboard";
 import ScrollVerse from "./pages/ScrollVerse";
 import ScrollVerseMetrics from "./pages/ScrollVerseMetrics";
+import ScrollVerseGuardians from "./pages/ScrollVerseGuardians";
+import ScrollVerseCommunity from "./pages/ScrollVerseCommunity";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -23,6 +25,8 @@ function Router() {
       <Route path={"/assets"} component={AssetDashboard} />
       <Route path={"/scrollverse"} component={ScrollVerse} />
       <Route path={"/scrollverse/metrics"} component={ScrollVerseMetrics} />
+      <Route path={"/scrollverse/guardians"} component={ScrollVerseGuardians} />
+      <Route path={"/scrollverse/community"} component={ScrollVerseCommunity} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

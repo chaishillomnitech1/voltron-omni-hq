@@ -91,17 +91,15 @@ class MailchimpScheduler {
 
     try {
       // Send weekly report
-      const result = await sendWeeklyReport();
+      const success = await sendWeeklyReport();
 
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
 
-      if (result.success) {
+      if (success) {
         console.log(`✅ Weekly report sent successfully`);
-        console.log(`   Recipients: ${result.recipientCount}`);
         console.log(`   Duration: ${duration}s`);
-        console.log(`   Campaign ID: ${result.campaignId}`);
       } else {
-        console.error(`❌ Weekly report failed: ${result.error}`);
+        console.error(`❌ Weekly report failed to send`);
       }
     } catch (error) {
       console.error(`❌ Error executing weekly report:`, error);
@@ -135,14 +133,14 @@ class MailchimpScheduler {
   /**
    * Send test report to admin
    */
-  async sendTestReport(adminEmail: string): Promise<void> {
+  async sendTestReportToAdmin(adminEmail: string): Promise<void> {
     console.log(`📧 Sending test report to ${adminEmail}...`);
     try {
-      const result = await sendTestReport(adminEmail);
-      if (result.success) {
+      const success = await sendTestReport(adminEmail);
+      if (success) {
         console.log(`✅ Test report sent successfully`);
       } else {
-        console.error(`❌ Test report failed: ${result.error}`);
+        console.error(`❌ Test report failed to send`);
       }
     } catch (error) {
       console.error(`❌ Error sending test report:`, error);

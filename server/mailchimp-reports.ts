@@ -341,7 +341,49 @@ class MailchimpReportsService {
   }
 }
 
-// Export service
+// Create singleton instance
+let reportsService: MailchimpReportsService | null = null;
+
+/**
+ * Initialize Mailchimp reports service
+ */
+export function initializeMailchimpReports(apiKey: string, serverPrefix: string, listId: string): MailchimpReportsService {
+  if (!reportsService) {
+    reportsService = new MailchimpReportsService(apiKey, serverPrefix, listId);
+  }
+  return reportsService;
+}
+
+/**
+ * Get Mailchimp reports service instance
+ */
+export function getMailchimpReports(): MailchimpReportsService {
+  if (!reportsService) {
+    const apiKey = process.env.MAILCHIMP_API_KEY || '';
+    const serverPrefix = process.env.MAILCHIMP_SERVER_PREFIX || 'us3';
+    const listId = process.env.MAILCHIMP_LIST_ID || '';
+    reportsService = new MailchimpReportsService(apiKey, serverPrefix, listId);
+  }
+  return reportsService;
+}
+
+/**
+ * Send weekly report (convenience function)
+ */
+export async function sendWeeklyReport(): Promise<boolean> {
+  const service = getMailchimpReports();
+  return await service.sendWeeklyReport();
+}
+
+/**
+ * Send test report (convenience function)
+ */
+export async function sendTestReport(testEmail: string): Promise<boolean> {
+  const service = getMailchimpReports();
+  return await service.sendTestReport(testEmail);
+}
+
+// Export service factory
 export const createMailchimpReportsService = (apiKey: string, serverPrefix: string, listId: string) => {
   return new MailchimpReportsService(apiKey, serverPrefix, listId);
 };

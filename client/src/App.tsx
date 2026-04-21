@@ -16,10 +16,17 @@ import ScrollVerseCommunity from "./pages/ScrollVerseCommunity";
 import GuardianCertificationQuiz from "./pages/GuardianCertificationQuiz";
 import ScrollVerseAnalytics from "./pages/ScrollVerseAnalytics";
 import SaferwayShowcase from "./pages/SaferwayShowcase";
+import SaferwayGreatDetail from "./pages/SaferwayGreatDetail";
+import DetailingServices from "./pages/DetailingServices";
+import AuctionOutlets from "./pages/AuctionOutlets";
+import CarRentalOutlets from "./pages/CarRentalOutlets";
+import SaferwayAdminDashboard from "./pages/SaferwayAdminDashboard";
+import SaferwayAIChat from "./components/SaferwayAIChat";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
+    <>
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/nft-minting"} component={NFTMinting} />
@@ -33,9 +40,16 @@ function Router() {
       <Route path={"/scrollverse/certification"} component={GuardianCertificationQuiz} />
       <Route path={"/scrollverse/analytics"} component={ScrollVerseAnalytics} />
       <Route path={"/saferway"} component={SaferwayShowcase} />
+      <Route path={"/saferway-detail"} component={SaferwayGreatDetail} />
+      <Route path={"/detailing"} component={DetailingServices} />
+      <Route path={"/auctions"} component={AuctionOutlets} />
+      <Route path={"/rentals"} component={CarRentalOutlets} />
+      <Route path={"/admin"} component={SaferwayAdminDashboard} />
       <Route path={"/404"} component={NotFound} />      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
+    <SaferwayAIChat />
+    </>
   );
 }
 

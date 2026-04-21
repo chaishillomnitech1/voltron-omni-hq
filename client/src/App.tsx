@@ -15,6 +15,7 @@ import ScrollVerseGuardians from "./pages/ScrollVerseGuardians";
 import ScrollVerseCommunity from "./pages/ScrollVerseCommunity";
 import GuardianCertificationQuiz from "./pages/GuardianCertificationQuiz";
 import ScrollVerseAnalytics from "./pages/ScrollVerseAnalytics";
+import SaferwayShowcase from "./pages/SaferwayShowcase";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -31,6 +32,7 @@ function Router() {
       <Route path={"/scrollverse/community"} component={ScrollVerseCommunity} />
       <Route path={"/scrollverse/certification"} component={GuardianCertificationQuiz} />
       <Route path={"/scrollverse/analytics"} component={ScrollVerseAnalytics} />
+      <Route path={"/saferway"} component={SaferwayShowcase} />
       <Route path={"/404"} component={NotFound} />      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>

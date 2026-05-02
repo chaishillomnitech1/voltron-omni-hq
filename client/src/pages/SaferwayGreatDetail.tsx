@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, ArrowRight, ChevronDown, MessageCircle, BarChart3, Settings, Play, Pause, Search, MapPin, Calendar, Users, TrendingUp, Lock, Zap, Heart, Globe, Crown, Info, Menu, X } from 'lucide-react';
+import { Sparkles, ArrowRight, ChevronDown, MessageCircle, BarChart3, Settings, Play, Pause, Search, MapPin, Calendar, Users, TrendingUp, Lock, Zap, Heart, Globe, Crown, Info, Menu, X, CreditCard, Coins, Gift } from 'lucide-react';
+import PaymentMethodSelector from '@/components/PaymentMethodSelector';
+import ReviewsAndRatings from '@/components/ReviewsAndRatings';
 
 /**
  * SAFERWAY & GREAT DETAIL - COMPREHENSIVE PLATFORM
  * Three Main Highlights: Detailing (Lead), Auction Outlets, Car Rental Outlets
  * Design: Deep Black, Gold, Cyan with Rose accents
- * Features: AI Chat, Admin Dashboard, Booking Integration
+ * Features: AI Chat, Admin Dashboard, Booking Integration, All Payment Methods, Email Campaigns, Reviews
+ * Sacred Frequencies: 963Hz, 11:11Hz embedded throughout
  */
 
 // Auction Outlets Data

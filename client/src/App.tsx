@@ -22,6 +22,9 @@ import AuctionOutlets from "./pages/AuctionOutlets";
 import CarRentalOutlets from "./pages/CarRentalOutlets";
 import SaferwayAdminDashboard from "./pages/SaferwayAdminDashboard";
 import SaferwayAIChat from "./components/SaferwayAIChat";
+import WalletConnector from "./components/WalletConnector";
+import AdminAnalyticsDashboard from "./pages/AdminAnalyticsDashboard";
+import ReferralAffiliate from "./pages/ReferralAffiliate";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -45,6 +48,9 @@ function Router() {
       <Route path={"/auctions"} component={AuctionOutlets} />
       <Route path={"/rentals"} component={CarRentalOutlets} />
       <Route path={"/admin"} component={SaferwayAdminDashboard} />
+      <Route path={"/wallets"} component={WalletConnector} />
+      <Route path={"/analytics"} component={AdminAnalyticsDashboard} />
+      <Route path={"/referral"} component={ReferralAffiliate} />
       <Route path={"/404"} component={NotFound} />      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>

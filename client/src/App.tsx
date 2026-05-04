@@ -26,6 +26,8 @@ import WalletConnector from "./components/WalletConnector";
 import AdminAnalyticsDashboard from "./pages/AdminAnalyticsDashboard";
 import ReferralAffiliate from "./pages/ReferralAffiliate";
 import AdminControlPanel from "./pages/AdminControlPanel";
+import PhysicalManifestationDashboard from "./pages/PhysicalManifestationDashboard";
+import DivineWisdomPortal from "./pages/DivineWisdomPortal";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -53,6 +55,8 @@ function Router() {
       <Route path={"/analytics"} component={AdminAnalyticsDashboard} />
        <Route path="/referral" component={ReferralAffiliate} />
       <Route path="/control-panel" component={AdminControlPanel} />
+      <Route path="/manifestation" component={PhysicalManifestationDashboard} />
+      <Route path="/divine-wisdom" component={DivineWisdomPortal} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

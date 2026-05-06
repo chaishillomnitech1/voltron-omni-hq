@@ -34,6 +34,9 @@ import GuardianTierProgression from "./pages/GuardianTierProgression";
 import ScrollVersePortalMatrix from "./pages/ScrollVersePortalMatrix";
 import DecentralizedMinting from "./pages/DecentralizedMinting";
 import AILegion from "./pages/AILegion";
+import BlockchainMonitoring from "./pages/BlockchainMonitoring";
+import GovernanceDAO from "./pages/GovernanceDAO";
+import GlobalDistribution from "./pages/GlobalDistribution";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -69,6 +72,9 @@ function Router() {
       <Route path="/scrollverse-portal" component={ScrollVersePortalMatrix} />
       <Route path="/decentralized-minting" component={DecentralizedMinting} />
       <Route path="/ai-legion" component={AILegion} />
+      <Route path="/blockchain-monitoring" component={BlockchainMonitoring} />
+      <Route path="/governance-dao" component={GovernanceDAO} />
+      <Route path="/global-distribution" component={GlobalDistribution} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

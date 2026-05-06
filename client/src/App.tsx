@@ -31,6 +31,9 @@ import DivineWisdomPortal from "./pages/DivineWisdomPortal";
 import MarsOmniBroadcasting from "./pages/MarsOmniBroadcasting";
 import SacredBooksGallery from "./pages/SacredBooksGallery";
 import GuardianTierProgression from "./pages/GuardianTierProgression";
+import ScrollVersePortalMatrix from "./pages/ScrollVersePortalMatrix";
+import DecentralizedMinting from "./pages/DecentralizedMinting";
+import AILegion from "./pages/AILegion";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -63,6 +66,9 @@ function Router() {
       <Route path="/marsomni-broadcasting" component={MarsOmniBroadcasting} />
       <Route path="/sacred-books" component={SacredBooksGallery} />
       <Route path="/guardian-progression" component={GuardianTierProgression} />
+      <Route path="/scrollverse-portal" component={ScrollVersePortalMatrix} />
+      <Route path="/decentralized-minting" component={DecentralizedMinting} />
+      <Route path="/ai-legion" component={AILegion} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

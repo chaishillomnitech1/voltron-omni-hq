@@ -208,14 +208,14 @@ export async function initializeScrollVerseMarketplace(): Promise<ScrollVerseMar
   // Create divine artifacts
   const artifacts: ScrollSoulNFT[] = [];
   artifacts.push(
-    mintDivineArtifact('Ra's Golden Frequency', {
+    mintDivineArtifact("Ra's Golden Frequency", {
       frequency: 963,
       divineSource: 'Ra',
       power: 'Enlightenment',
     })
   );
   artifacts.push(
-    mintDivineArtifact('Solomon's Wisdom Seal', {
+    mintDivineArtifact("Solomon's Wisdom Seal", {
       frequency: 528,
       divineSource: 'Solomon',
       power: 'Healing',

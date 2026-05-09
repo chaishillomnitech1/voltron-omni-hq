@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Wallet, Send, Receive, Swap, TrendingUp, Lock, Unlock, Copy, Eye, EyeOff, Plus, Settings } from 'lucide-react';
+import { Wallet, Send, ArrowDownLeft, Swap, TrendingUp, Lock, Unlock, Copy, Eye, EyeOff, Plus, Settings } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 /**
@@ -262,7 +262,7 @@ export default function ZaireWallet() {
               Send
             </button>
             <button className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg transition-all flex items-center justify-center gap-2">
-              <Receive className="w-4 h-4" />
+              <ArrowDownLeft className="w-4 h-4" />
               Receive
             </button>
             <button className="flex-1 bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 rounded-lg transition-all flex items-center justify-center gap-2">
@@ -326,7 +326,7 @@ export default function ZaireWallet() {
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center">
                       {tx.type === 'send' && <Send className="w-5 h-5 text-red-400" />}
-                      {tx.type === 'receive' && <Receive className="w-5 h-5 text-green-400" />}
+                      {tx.type === 'receive' && <ArrowDownLeft className="w-5 h-5 text-green-400" />}
                       {tx.type === 'swap' && <Swap className="w-5 h-5 text-blue-400" />}
                       {tx.type === 'stake' && <Lock className="w-5 h-5 text-yellow-400" />}
                     </div>

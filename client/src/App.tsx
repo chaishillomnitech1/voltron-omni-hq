@@ -37,6 +37,10 @@ import AILegion from "./pages/AILegion";
 import BlockchainMonitoring from "./pages/BlockchainMonitoring";
 import GovernanceDAO from "./pages/GovernanceDAO";
 import GlobalDistribution from "./pages/GlobalDistribution";
+import MobileGovernance from "./pages/MobileGovernance";
+import ExchangeDashboard from "./pages/ExchangeDashboard";
+import TokenLauncher from "./pages/TokenLauncher";
+import ZaireWallet from "./pages/ZaireWallet";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -75,6 +79,10 @@ function Router() {
       <Route path="/blockchain-monitoring" component={BlockchainMonitoring} />
       <Route path="/governance-dao" component={GovernanceDAO} />
       <Route path="/global-distribution" component={GlobalDistribution} />
+      <Route path="/mobile-governance" component={MobileGovernance} />
+      <Route path="/exchange" component={ExchangeDashboard} />
+      <Route path="/token-launcher" component={TokenLauncher} />
+      <Route path="/zaire-wallet" component={ZaireWallet} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

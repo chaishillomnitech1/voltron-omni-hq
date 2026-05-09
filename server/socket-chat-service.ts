@@ -105,9 +105,13 @@ class SocketChatService {
 
           // Save to database
           const db = await getDb();
+          if (!db) {
+            socket.emit('error', { message: 'Database unavailable' });
+            return;
+          }
           const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-          await db.insert(chatMessages).values({
+          await (db as any).insert(chatMessages).values({
             id: messageId,
             channelId,
             userId: user.id,
@@ -144,15 +148,16 @@ class SocketChatService {
         try {
           const { messageId, channelId } = data;
           const db = await getDb();
+          if (!db) return;
 
           // Update likes in database
-          const message = await db.query.chatMessages.findFirst({
+          const message = await (db.query as any).chatMessages.findFirst({
             where: eq(chatMessages.id, messageId),
           });
 
           if (message) {
             const newLikes = (message.likes || 0) + 1;
-            await db.update(chatMessages)
+            await (db as any).update(chatMessages)
               .set({ likes: newLikes })
               .where(eq(chatMessages.id, messageId));
 
@@ -172,9 +177,10 @@ class SocketChatService {
         try {
           const { messageId, channelId, emoji } = data;
           const db = await getDb();
+          if (!db) return;
 
           // Update reactions in database
-          const message = await db.query.chatMessages.findFirst({
+          const message = await (db.query as any).chatMessages.findFirst({
             where: eq(chatMessages.id, messageId),
           });
 
@@ -182,7 +188,7 @@ class SocketChatService {
             const reactions = message.reactions || {};
             reactions[emoji] = (reactions[emoji] || 0) + 1;
 
-            await db.update(chatMessages)
+            await (db as any).update(chatMessages)
               .set({ reactions })
               .where(eq(chatMessages.id, messageId));
 
@@ -210,7 +216,8 @@ class SocketChatService {
           }
 
           const db = await getDb();
-          await db.delete(chatMessages).where(eq(chatMessages.id, messageId));
+          if (!db) return;
+          await (db as any).delete(chatMessages).where(eq(chatMessages.id, messageId));
 
           // Broadcast deletion
           this.io.to(`channel:${channelId}`).emit('message-deleted', { messageId });
@@ -268,13 +275,17 @@ class SocketChatService {
   async getChannelMessages(channelId: string, limit: number = 50): Promise<ChatMessageData[]> {
     try {
       const db = await getDb();
-      const messages = await db.query.chatMessages.findMany({
+      if (!db) {
+        console.error('[Socket Chat] Database connection failed');
+        return [];
+      }
+      const messages = await (db.query as any).chatMessages.findMany({
         where: eq(chatMessages.channelId, channelId),
         limit,
-        orderBy: (m) => [m.createdAt],
+        orderBy: (m: any) => [m.createdAt],
       });
 
-      return messages.map((m) => ({
+      return messages.map((m: any) => ({
         id: m.id,
         channelId: m.channelId,
         userId: m.userId,

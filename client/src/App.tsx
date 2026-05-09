@@ -41,6 +41,7 @@ import MobileGovernance from "./pages/MobileGovernance";
 import ExchangeDashboard from "./pages/ExchangeDashboard";
 import TokenLauncher from "./pages/TokenLauncher";
 import ZaireWallet from "./pages/ZaireWallet";
+import UserProfile from "./pages/UserProfile";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -83,6 +84,7 @@ function Router() {
       <Route path="/exchange" component={ExchangeDashboard} />
       <Route path="/token-launcher" component={TokenLauncher} />
       <Route path="/zaire-wallet" component={ZaireWallet} />
+      <Route path="/profile" component={UserProfile} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
